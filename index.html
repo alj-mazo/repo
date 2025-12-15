@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aljohn Mazo — IT Student Portfolio</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <meta name="description" content="Portfolio of an IT student showcasing skills, resume and the SDSO project." />
+  <style>
+    :root{
+      --bg:#08121a;
+      --card:#0f2630;
+      --accent:#ff6b5f;
+      --muted:#98a3ad;
+      --glass: rgba(255,255,255,0.03);
+      --radius:16px;
+      --duration:700ms;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+
+    /* Basic reset */
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#07121a 0%, #07111a 60%);color:#e6eef3;overflow-x:hidden}
+    a{color:var(--accent);text-decoration:none}
+    header{display:flex;align-items:center;justify-content:space-between;padding:20px 48px;z-index:20}
+    header .brand{font-weight:700;letter-spacing:0.4px}
+    nav a{margin-left:22px;color:var(--muted);font-weight:600}
+
+    /* Mobile hamburger */
+    .nav-toggle{
+      display:none;
+      background:transparent;
+      border:0;
+      width:44px;height:44px;border-radius:8px;
+      align-items:center;justify-content:center;
+      cursor:pointer;
+    }
+    .nav-toggle svg{width:22px;height:22px;display:block;fill:none;stroke:#fff;stroke-width:2.2}
+
+    /* Mobile nav overlay */
+    .mobile-nav{
+      display:none;
+      position:fixed;inset:0;background:rgba(4,8,10,0.92);z-index:60;
+      padding-top:80px;align-items:center;justify-content:center;flex-direction:column;
+    }
+    .mobile-nav a{
+      display:block;color:#fff;font-weight:700;font-size:20px;padding:14px 24px;text-decoration:none;
+    }
+    .mobile-nav .close-btn{
+      position:absolute;right:18px;top:18px;background:transparent;border:0;padding:8px;cursor:pointer;
+    }
+    .mobile-nav .close-btn svg{width:20px;height:20px;stroke:#fff;stroke-width:2.2}
+
+    /* INTRO overlay */
+    .intro-overlay{
+      position:fixed;
+      inset:0;
+      background:linear-gradient(180deg, rgba(7,13,17,0.95), rgba(6,11,15,0.96));
+      z-index:9999;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      font-weight:700;
+      letter-spacing:1px;
+      flex-direction:column;
+      gap:18px;
+    }
+    .intro-card{
+      width:min(520px,90%);
+      max-width:520px;
+      padding:22px;
+      border-radius:14px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      box-shadow:0 10px 40px rgba(0,0,0,0.6);
+      display:flex;
+      align-items:center;
+      gap:16px;
+    }
+
+    .spinner{
+      width:56px;height:56px;border-radius:50%;position:relative;flex:0 0 56px;
+      display:flex;align-items:center;justify-content:center;
+    }
+    .spinner::before{
+      content:"";
+      position:absolute;inset:0;border-radius:50%;
+      border:4px solid rgba(255,255,255,0.08);
+      box-sizing:border-box;
+    }
+    .spinner::after{
+      content:"";
+      position:absolute;inset:6px;border-radius:50%;
+      border:4px solid transparent;
+      border-top-color:var(--accent);
+      transform-origin:center;
+      animation: spin 1200ms linear infinite;
+      box-sizing:border-box;
+    }
+    @keyframes spin{ to { transform: rotate(360deg); } }
+
+    .intro-text{font-size:14px;color:var(--muted)}
+    .progress-wrap{width:100%;height:8px;background:rgba(255,255,255,0.04);border-radius:6px;overflow:hidden}
+    .progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),#ff8a74);transition:width 200ms linear}
+
+    .intro-overlay.exit{
+      animation: overlayExit 700ms cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes overlayExit {
+      0% { opacity:1; transform:scale(1) translateZ(0); filter:blur(0px); }
+      40%{ opacity:0.95; transform:scale(1.02) translateZ(0) ; filter:blur(2px); }
+      100%{ opacity:0; transform:scale(0.95) translateY(-40px) ; filter:blur(8px); visibility:hidden; }
+    }
+
+    /* HERO */
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;padding:36px 48px;align-items:center;min-height:38vh;position:relative;z-index:2}
+    .hero-left{max-width:780px}
+    .eyebrow{color:var(--muted);font-weight:700;font-size:20px}
+    h1{font-size:44px;margin:8px 0 6px}
+    h1 strong{display:block;font-size:56px;color:#fff}
+    p.lead{color:var(--muted);line-height:1.6;max-width:60ch}
+    .cta{margin-top:22px;display:flex;gap:12px}
+    .btn{display:inline-block;padding:12px 18px;border-radius:10px;font-weight:700}
+    .btn-primary{background:linear-gradient(90deg,var(--accent),#ff8a74);color:#0b1417}
+    .btn-outline{border:1px solid rgba(255,255,255,0.08);background:transparent;color:#fff;padding:11px 16px}
+
+    .hero-right{display:flex;align-items:center;justify-content:center}
+    .avatar-wrap{
+      width:320px;height:320px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      box-shadow:0 8px 40px rgba(0,0,0,0.6);
+      position:relative;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,95,0.02), rgba(0,0,0,0));
+    }
+    .avatar{
+      width:280px;height:280px;border-radius:50%;
+      background:linear-gradient(180deg,#1f2f36,#0e1b20);
+      display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:64px;font-weight:800;overflow:hidden;
+      position:relative;
+    }
+    .avatar img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      border-radius:50%;
+      display:block;
+      background:transparent;
+      filter: none;
+    }
+
+    /* SKILLS BAR */
+    .skills{display:flex;gap:18px;padding:18px 48px;flex-wrap:wrap}
+    .skill{background:var(--glass);padding:10px 14px;border-radius:10px;color:var(--muted);font-weight:600}
+
+    /* Icons row */
+    .icons {
+      display:flex;
+      gap:16px;
+      padding:14px 48px 0 48px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .icon-card{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));
+      padding:10px 14px;
+      border-radius:10px;
+      color:var(--muted);
+      font-weight:700;
+      min-width:180px;
+    }
+    .icon-svg{width:28px;height:28px;flex:0 0 28px;display:block}
+
+    /* MAIN */
+    main{padding:28px 48px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:14px;backdrop-filter: blur(6px)}
+
+    /* ABOUT & STATS */
+    .about{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start}
+    .about p{color:var(--muted);line-height:1.7}
+    .stats{display:flex;gap:18px;justify-content:space-between;margin-top:18px}
+    .stat{flex:1;text-align:left}
+    .stat .num{font-size:20px;font-weight:800;color:#fff}
+    .stat .label{color:var(--muted);font-weight:600}
+
+    /* PROJECTS */
+    .projects{margin-top:30px}
+    .project{display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:center;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent)}
+    .project h3{margin:0}
+    .project .meta{color:var(--muted);margin-top:8px}
+    .project .tags{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+    .tag{background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:8px;color:var(--muted);font-weight:700}
+    .screenshot-img{width:100%;height:220px;object-fit:cover;border-radius:10px;background:linear-gradient(90deg,#06131a,#0f2730);display:block}
+
+    /* CONTACT */
+    .contact{margin-top:36px;display:grid;grid-template-columns:1fr 340px;gap:20px}
+    .contact-list{color:var(--muted);line-height:1.9}
+    .contact-list a{color:var(--muted);display:inline-block;margin-top:6px}
+
+    footer{padding:36px 48px;color:var(--muted);text-align:center}
+
+    /* Reveal animation utilities */
+    .reveal {
+      opacity:0;
+      transform: translateY(20px) scale(.995);
+      transition: transform var(--duration) cubic-bezier(.2,.9,.2,1), opacity calc(var(--duration) * .9) ease;
+      will-change:transform,opacity;
+      pointer-events:none;
+    }
+    .reveal.visible{
+      opacity:1;
+      transform: translateY(0) scale(1);
+      pointer-events:auto;
+    }
+
+    /* Slight hover / focus lift to make the UI feel tactile */
+    .card:hover { transform: translateY(-6px); transition: transform 100ms ease; }
+    .card:focus-within { transform: translateY(-6px); }
+
+    /* RESPONSIVE: compact + center alignment + hamburger */
+    @media (max-width:900px){
+      header{padding:12px 18px}
+      .nav-toggle{display:flex}
+      nav{display:none}
+      /* mobile-nav intentionally remains display:none by default; JavaScript opens it */
+      .hero{grid-template-columns:1fr;gap:12px;padding:18px}
+      .hero-right{order:-1;justify-content:center}
+      .hero-left{text-align:center}
+      .cta{justify-content:center}
+      .icons{justify-content:center;padding:10px 18px}
+      .skills{justify-content:center;padding:10px 18px}
+      .about{grid-template-columns:1fr;gap:18px}
+      .stats{flex-direction:column;gap:12px}
+      .stat{text-align:center}
+      .project{grid-template-columns:1fr;gap:12px}
+      .contact{grid-template-columns:1fr;gap:12px}
+      .avatar-wrap{width:220px;height:220px}
+      .avatar{width:180px;height:180px}
+      .screenshot-img{height:180px}
+      .icon-card{min-width:150px}
+    }
+
+    @media (max-width:420px){
+      h1{font-size:30px}
+      h1 strong{font-size:38px}
+      .avatar-wrap{width:180px;height:180px}
+      .avatar{width:150px;height:150px;font-size:36px}
+      .icon-card{min-width:140px}
+      .cta{flex-direction:column;gap:10px}
+    }
+  </style>
+</head>
+<body>
+  <!-- Intro overlay: loading-style -->
+  <div id="intro" class="intro-overlay" aria-hidden="false" role="status" aria-live="polite">
+    <div class="intro-card" role="presentation" aria-hidden="true">
+      <div class="spinner" aria-hidden="true"></div>
+      <div style="flex:1">
+        <div style="font-size:16px;font-weight:800">Aljohn Mazo — IT Student</div>
+        <div class="intro-text" style="margin-top:6px">Preparing the portfolio…</div>
+        <div style="margin-top:12px">
+          <div class="progress-wrap" aria-hidden="true">
+            <div id="progressBar" class="progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+      <div style="width:44px;text-align:center;font-size:12px;color:var(--muted)">v1</div>
+    </div>
+  </div>
+
+  <header class="reveal" id="site-header">
+    <div class="brand">Aljohn Mazo</div>
+
+    <!-- Nav links (desktop) -->
+    <nav aria-label="Main navigation">
+      <a href="#about">About</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+      <a href="#resume">Resume</a>
+    </nav>
+
+    <!-- Hamburger (mobile) -->
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false">
+      <!-- white hamburger -->
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M3 7h18M3 12h18M3 17h18" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </header>
+
+  <!-- Mobile nav overlay -->
+  <div class="mobile-nav" id="mobileNav" aria-hidden="true" role="dialog" aria-modal="true" style="display:none;">
+    <button class="close-btn" id="navClose" aria-label="Close menu">
+      <svg viewBox="0 0 24 24"><path d="M6 6L18 18M6 18L18 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <a href="#about" class="mobile-link">About</a>
+    <a href="#projects" class="mobile-link">Projects</a>
+    <a href="#contact" class="mobile-link">Contact</a>
+    <a href="#resume" class="mobile-link">Resume</a>
+  </div>
+
+  <section class="hero reveal" id="hero">
+    <div class="hero-left">
+      <div class="eyebrow">Hello.</div>
+      <h1>I'm <strong>Aljohn Mazo</strong><span style="display:block;font-size:28px;margin-top:6px;color:var(--accent);font-weight:800">Software / IT Student</span></h1>
+      <p class="lead">I am currently pursuing a degree in Information Technology with a focus on software development and systems. I enjoy learning new technologies and applying them to academic and practical projects. One of my key experiences is developing the SDSO Management System, a project used by real students and instructors. I’m passionate about turning ideas into functional solutions and improving my skills through hands-on learning.</p>
+
+      <div class="cta">
+        <a class="btn btn-primary" href="#contact">Got a project?</a>
+        <a class="btn btn-outline" id="resume" href="Aljf">My resume</a>
+      </div>
+    </div>
+
+    <aside class="hero-right">
+      <div class="avatar-wrap">
+        <div class="avatar" aria-hidden="true" tabindex="-1">
+          <!-- Replace 'hello.png' with your actual photo -->
+          <img id="profilePhoto" src="hello.jpg" alt="Aljohn Mazo" />
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Icon cards for Web / Network / Data -->
+  <div class="icons reveal" aria-hidden="false">
+    <div class="icon-card">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="3" y="5" width="18" height="11" rx="1.5" stroke="currentColor" stroke-opacity="0.85" stroke-width="1.6"/>
+        <rect x="1.5" y="17.5" width="21" height="1.5" rx="0.75" fill="currentColor" fill-opacity="0.06"/>
+      </svg>
+      <div>Web Development</div>
+    </div>
+
+    <div class="icon-card">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="6.5" cy="7.5" r="1.8" stroke="currentColor" stroke-opacity="0.85" stroke-width="1.6"/>
+        <circle cx="17.5" cy="7.5" r="1.8" stroke="currentColor" stroke-opacity="0.85" stroke-width="1.6"/>
+        <circle cx="12" cy="16.2" r="1.8" stroke="currentColor" stroke-opacity="0.85" stroke-width="1.6"/>
+        <path d="M8.1 9.2L11.3 13.5" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M15.9 9.2L12.7 13.5" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      <div>Networking (Packet Tracer)</div>
+    </div>
+
+    <div class="icon-card">
+      <svg class="icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <ellipse cx="12" cy="6.3" rx="7.5" ry="2.3" stroke="currentColor" stroke-opacity="0.85" stroke-width="1.6"/>
+        <path d="M4.5 6.3v4.5c0 1.3 3.3 2.8 7.5 2.8s7.5-1.5 7.5-2.8V6.3" stroke="currentColor" stroke-opacity="0.75" stroke-width="1.4"/>
+        <path d="M4.5 10.8v4.5c0 1.3 3.3 2.8 7.5 2.8s7.5-1.5 7.5-2.8v-4.5" stroke="currentColor" stroke-opacity="0.65" stroke-width="1.2"/>
+      </svg>
+      <div>Data Structures & DB</div>
+    </div>
+  </div>
+
+  <div class="skills reveal" aria-label="skills">
+    <div class="skill">HTML</div>
+    <div class="skill">CSS</div>
+    <div class="skill">JavaScript</div>
+    <div class="skill">Git</div>
+    <div class="skill">PHP</div>
+    <div class="skill">SQL</div>
+  </div>
+
+  <main>
+    <section id="about" class="card about reveal">
+      <div>
+        <h2>About me</h2>
+        <p>I am currently pursuing a degree in Information Technology with a focus on software development and systems. I enjoy learning new technologies and applying them to academic and practical projects. One of my key experiences is developing the SDSO Management System, a project used by real students and instructors. I’m passionate about turning ideas into functional solutions and improving my skills through hands-on learning.</p>
+
+        <div class="stats" role="list">
+          <div style="display:flex;gap:18px;flex-direction:column;">
+            <div class="stat" role="listitem">
+              <div class="num">College experience</div>
+              <div class="label" style="margin-top:8px;line-height:1.6">Coursework: Data Structures, Web Development, Networking (Cisco Packet Tracer).</div>
+            </div>
+            <div class="stat" role="listitem">
+              <div class="num">Soft skills</div>
+              <div class="label" style="margin-top:8px;line-height:1.6">Problem solving, teamwork, communication, time management, adaptability, debugging & troubleshooting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <h3>Quick facts</h3>
+        <ul style="color:var(--muted);padding-left:18px;line-height:1.9">
+          <li>Available for internships & freelance</li>
+          <li>Comfortable with CLI & Linux servers</li>
+          <li>Active on GitHub: <a href="https://gith">https://github.o</a></li>
+        </ul>
+      </aside>
+    </section>
+
+    <section id="projects" class="projects reveal">
+      <h2>Projects</h2>
+
+      <!-- FEATURED PROJECT: SDSO -->
+      <article class="project reveal" aria-labelledby="sdsotitle">
+        <div>
+          <h3 id="sdsotitle">SDSO — Student Data & Services Organizer</h3>
+          <p class="meta">SDSO supports complaint pre-verification scheduling, appointment scheduling, online Student Development Services forms, certificate follow-up tracking, and student organization accreditation workflows.</p>
+
+          <p style="color:var(--muted)">Role: Lead developer (design, backend, frontend). Built as a semester project to demonstrate database design, REST API development, and a responsive frontend.</p>
+
+          <h4 style="margin-top:14px">Highlights</h4>
+          <ul style="color:var(--muted);line-height:1.7">
+            <li>Complaint pre-verification workflow with scheduling and status tracking</li>
+            <li>Appointment scheduling for student services with calendar availability checks</li>
+            <li>Online SDS forms and submission handling</li>
+            <li>Certificate follow-up tracker for processing and status updates</li>
+            <li>Student organization accreditation requests and approval workflows</li>
+            <li>Student registration & profile management (create/read/update/delete)</li>
+            <li>Authentication + role-based access (student, staff, admin)</li>
+          </ul>
+
+          <div style="margin-top:12px">
+            <a class="btn btn-primary" href="https://limegreen-goldfinch-721164.hostingersite.com/home.php" role="button">View source</a>
+          </div>
+        </div>
+
+        <div>
+          <!-- Screenshot: use an image src so it displays properly -->
+          <img src="ss.png" alt="SDSO screenshot" class="screenshot-img" />
+        </div>
+      </article>
+
+    </section>
+
+    <section id="contact" class="contact reveal">
+      <div class="card reveal">
+        <h3>Contact</h3>
+        <p style="color:var(--muted)">You can reach me via the contacts below:</p>
+
+        <div class="contact-list">
+          <div><strong>Email (Gmail):</strong> <a href="mailto:youremail@gmail.com">youremail@gmail.com</a></div>
+          <div style="margin-top:8px"><strong>Phone:</strong> <a href="tel:+639171234567">+63 917 123 4567</a></div>
+          <div style="margin-top:8px"><strong>Alternate:</strong> <span style="color:var(--muted)">Available on WhatsApp / SMS</span></div>
+        </div>
+      </div>
+
+      <aside class="card reveal">
+        <h3>Resume & Links</h3>
+        <p style="color:var(--muted)">Download my resume or connect with me on professional sites.</p>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px">
+          <a class="btn btn-outline" href="Aljf">Download resume (PDF)</a>
+          <a class="btn btn-outline" href="https://github.com">GitHub</a>
+        </div>
+      </aside>
+    </section>
+
+  </main>
+
+  <footer class="reveal">
+    <div>© <span id="year"></span> Aljohn Mazo — IT Student. Built with curiosity.</div>
+  </footer>
+
+  <script>
+    // ---------- CONFIG ----------
+    const INTRO_DURATION = 2100; // ms
+
+    // set year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Elements used by nav logic
+    const navToggle = document.getElementById('navToggle');
+    const mobileNav = document.getElementById('mobileNav');
+    const navClose = document.getElementById('navClose');
+
+    // ensure mobile nav is closed and aria attributes are correct
+    function closeMobileNav(){
+      try {
+        mobileNav.style.display = 'none';
+        mobileNav.setAttribute('aria-hidden','true');
+      } catch(e){}
+      try { navToggle.setAttribute('aria-expanded','false'); } catch(e){}
+      document.body.style.overflow = '';
+    }
+    function openMobileNav(){
+      try {
+        mobileNav.style.display = 'flex';
+        mobileNav.setAttribute('aria-hidden','false');
+      } catch(e){}
+      try { navToggle.setAttribute('aria-expanded','true'); } catch(e){}
+      document.body.style.overflow = 'hidden';
+    }
+
+    // call closeMobileNav early so even if JS runs slowly, we attempt to set closed state
+    // This sets inline style & aria; improves behavior on refresh/small screens.
+    closeMobileNav();
+
+    // ---------- Intro: progress & exit ----------
+    (function introSequence(){
+      const intro = document.getElementById('intro');
+      const bar = document.getElementById('progressBar');
+
+      const start = performance.now();
+      function tick(now){
+        const elapsed = now - start;
+        const t = Math.min(1, elapsed / INTRO_DURATION);
+        const ease = 1 - Math.pow(1 - t, 3);
+        bar.style.width = Math.round(ease * 100) + '%';
+
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        } else {
+          setTimeout(() => {
+            intro.classList.add('exit');
+            setTimeout(()=> {
+              try{ intro.remove(); } catch(e){}
+              // ensure mobile nav closed once the intro goes away
+              closeMobileNav();
+              initReveal();
+              attachHashHandlers();
+            }, 700);
+          }, 160);
+        }
+      }
+      requestAnimationFrame(tick);
+    })();
+
+    // ---------- Reveal on scroll ----------
+    function initReveal(){
+      const revealElems = document.querySelectorAll('.reveal');
+      revealElems.forEach((el, idx) => {
+        el.classList.remove('visible');
+        const delay = Math.min(350, (idx * 50) + (Math.random() * 100));
+        el.style.transitionDelay = delay + 'ms';
+      });
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if(entry.isIntersecting) entry.target.classList.add('visible');
+          else entry.target.classList.remove('visible');
+        });
+      }, { root: null, rootMargin: '0px', threshold: 0.12 });
+      revealElems.forEach(el => observer.observe(el));
+    }
+
+    // ---------- Hash link behavior ----------
+    function removeHashFromUrl(){
+      if (history && history.replaceState) {
+        const { pathname, search } = window.location;
+        history.replaceState(null, '', pathname + (search || ''));
+      } else {
+        try { location.hash = ''; } catch(e){}
+      }
+    }
+
+    function attachHashHandlers(){
+      const hashLinks = document.querySelectorAll('a[href^="#"], .mobile-link');
+
+      hashLinks.forEach(link => {
+        link.addEventListener('click', function(ev){
+          const href = link.getAttribute('href') || (link.classList.contains('mobile-link') ? link.getAttribute('href') : null);
+          // close mobile nav if open
+          closeMobileNav();
+          if (!href || href === '#' ) {
+            ev.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            removeHashFromUrl();
+            return;
+          }
+          const targetId = href.slice(1);
+          const targetEl = document.getElementById(targetId);
+          ev.preventDefault();
+          if (targetEl) {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            setTimeout(() => removeHashFromUrl(), 250);
+          } else {
+            removeHashFromUrl();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }, { passive: false });
+      });
+    }
+
+    // ---------- Mobile nav toggle handlers ----------
+    navToggle && navToggle.addEventListener('click', () => {
+      const isOpen = navToggle.getAttribute('aria-expanded') === 'true';
+      if (isOpen) closeMobileNav(); else openMobileNav();
+    });
+    navClose && navClose.addEventListener('click', closeMobileNav);
+
+    // Close mobile nav when clicking outside links (touch area)
+    mobileNav && mobileNav.addEventListener('click', (e) => {
+      if (e.target === mobileNav) closeMobileNav();
+    });
+
+    // If window resizes to desktop, ensure mobile nav closed
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 900) closeMobileNav();
+    });
+
+    // ---------- Init on DOMContentLoaded fallback ----------
+    document.addEventListener('DOMContentLoaded', () => {
+      // ensure menu closed on DOM ready (covers refresh)
+      closeMobileNav();
+      // if the intro overlay was removed earlier, init reveals and handlers
+      if (!document.getElementById('intro')) {
+        initReveal();
+        attachHashHandlers();
+      }
+    });
+
+    // final safety call after intro duration
+    setTimeout(() => { 
+      // ensure closed state still applied
+      closeMobileNav();
+      if (!document.getElementById('intro')) attachHashHandlers(); 
+    }, INTRO_DURATION + 1200);
+
+    // Accessibility: keyboard focus styles + ESC to close mobile nav
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Tab') document.documentElement.style.scrollBehavior = 'smooth';
+      if(e.key === 'Escape') closeMobileNav();
+    });
+
+    // popstate: remove hash so refresh doesn't jump, and ensure mobile nav closed
+    window.addEventListener('popstate', () => {
+      setTimeout(() => { 
+        if (location.hash) removeHashFromUrl(); 
+        closeMobileNav();
+      }, 40);
+    });
+
+    // Ensure nav closed if the page is loaded with a hash in the URL (user wants menu closed regardless)
+    (function enforceClosedOnLoad(){
+      try {
+        closeMobileNav();
+        if (location.hash) {
+          // keep deep-link behavior but ensure the nav stays closed
+          // don't remove hash here to preserve external deep-links
+          setTimeout(() => closeMobileNav(), 200);
+        }
+      } catch(e){}
+    })();
+  </script>
+</body>
+</html>
